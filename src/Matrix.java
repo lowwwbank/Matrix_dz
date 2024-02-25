@@ -1,87 +1,112 @@
 public class Matrix {
-    public static void print(Complex[][] matrix) {
-        for (Complex[] row : matrix) {
+    private Complex[][] matrix;
+
+    public Matrix(Complex[][] matrix) {
+        this.matrix = matrix;
+    }
+    public Matrix(int row, int col) {
+        matrix = new Complex[row][col];
+    }
+
+    public Complex getElement(int row, int col) {
+        return matrix[row][col];
+    }
+    public void setElement(int row, int col, Complex complex) {
+        matrix[row][col] = complex;
+    }
+    public void setMatrix(Complex[][] matrix) {
+        this.matrix = matrix;
+    }
+    public int getCols() {
+        return matrix[0].length;
+    }
+    public int getRows() {
+        return matrix.length;
+    }
+
+    public static void print(Matrix matrix) {
+        for (int row = 0; row < matrix.getRows(); row++) {
             System.out.print("[");
-            for (Complex element : row) {
-                System.out.print(element + "  ");
+            for (int col = 0; col < matrix.getRows(); col++) {
+                System.out.print(matrix.getElement(row, col) + "  ");
             }
             System.out.println("]");
         }
     }
 
-    public static Complex[][] plus(Complex[][] A, Complex[][] B) {
-        int rows = A.length;
-        int cols = B[0].length;
-        int secCols = A[0].length;
-        int secRows = B.length;
+    public static Matrix plus(Matrix A, Matrix B) {
+        int rows = A.getRows();
+        int cols = B.getCols();
+        int secCols = A.getCols();
+        int secRows = B.getRows();
         if (cols != secCols || rows != secRows) {
             throw new IllegalArgumentException("The first and the second matrices should have identical dimensions");
         }
-        Complex[][] res = new Complex[rows][cols];
+        Matrix res = new Matrix(rows, cols);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Complex sum = new Complex(0, 0);
                 for (int k = 0; k < secCols; k++) {
-                    sum = Complex.plus(A[i][j], B[i][j]);
+                    sum = Complex.plus(A.getElement(i, j), B.getElement(i, j));
                 }
-                res[i][j] = sum;
+                res.setElement(i, j, sum);
             }
         }
 
         return res;
     }
 
-    public static Complex[][] minus(Complex[][] A, Complex[][] B) {
-        int rows = A.length;
-        int cols = B[0].length;
-        int secCols = A[0].length;
-        int secRows = B.length;
+    public static Matrix minus(Matrix A, Matrix B) {
+        int rows = A.getRows();
+        int cols = B.getCols();
+        int secCols = A.getCols();
+        int secRows = B.getRows();
         if (cols != secCols || rows != secRows) {
             throw new IllegalArgumentException("The first and the second matrices should have identical dimensions");
         }
-        Complex[][] res = new Complex[rows][cols];
+        Matrix res = new Matrix(rows, cols);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Complex sum = new Complex(0, 0);
                 for (int k = 0; k < secCols; k++) {
-                    sum = Complex.minus(A[i][j], B[i][j]);
+                    sum = Complex.minus(A.getElement(i, j), B.getElement(i, j));
                 }
-                res[i][j] = sum;
+                res.setElement(i, j, sum);
             }
         }
 
         return res;
     }
 
-    public static Complex[][] transpose(Complex[][] A) {
-        int rows = A.length;
-        int cols = A[0].length;
+    public static Matrix transpose(Matrix A) {
+        int rows = A.getRows();
+        int cols = A.getCols();
 
-        Complex[][] res = new Complex[cols][rows];
+        Matrix res = new Matrix(cols, rows);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                res[j][i] = A[i][j];
+                res.setElement(j, i, A.getElement(i, j));
             }
         }
 
         return res;
     }
-    public static Complex[][] mult(Complex[][] A, Complex[][] B) {
-        int rows = A.length;
-        int cols = B[0].length;
-        int secCols = A[0].length;
-        int secRows = B.length;
+    public static Matrix mult(Matrix A, Matrix B) {
+        int rows = A.getRows();
+        int cols = B.getCols();
+        int secCols = A.getCols();
+        int secRows = B.getRows();
         if (secRows != secCols) {
             throw new IllegalArgumentException("The first matrix should have the same cols quantity as the second matrix rows");
         }
-        Complex[][] res = new Complex[rows][cols];
+        Matrix res = new Matrix(rows, cols);
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
                 Complex ans = new Complex(0, 0);
                 for (int k = 0; k < secCols; k++) {
-                    ans = Complex.plus(ans, Complex.multiply(A[i][k], B[k][j]));
+                    ans = Complex.plus(ans, Complex.multiply(A.getElement(i, k), B.getElement(k,j)));
                 }
-                res[i][j] = ans;
+                res.setElement(i, j, ans);
             }
         }
 
@@ -91,13 +116,14 @@ public class Matrix {
 
 
     public static void main(String[] args) {
-        Complex[][] A = {{new Complex(1, 2), new Complex(2, 4), new Complex(4, 1)},
-                {new Complex(2, 2), new Complex(1, 4), new Complex(5, 3)},
+        Complex[][] C1 = {{new Complex(1, 2), new Complex(2, 4), new Complex(4, 1)},
+                {new Complex(2, 6), new Complex(1, 4), new Complex(5, 3)},
                 {new Complex(1, 6), new Complex(3, 7), new Complex(2, 6)}};
-        Complex[][] B = {{new Complex(1, 3), new Complex(2, 5), new Complex(7, 8)},
+        Complex[][] C2 = {{new Complex(1, 3), new Complex(2, 5), new Complex(7, 8)},
                 {new Complex(2, 8), new Complex(3, 2), new Complex(1, 6)},
                 {new Complex(1, 3), new Complex(1, 1), new Complex(2, 2)}};
-
+        Matrix A = new Matrix(C1);
+        Matrix B = new Matrix(C2);
         System.out.println("Матрица A:");
         print(A);
 
